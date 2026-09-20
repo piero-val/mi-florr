@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Feliz dia de las Flores Amarillas 🌻</title>
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#000;overflow:hidden;touch-action:none;font-family:'Poppins',sans-serif}
+#canvas{width:100%;height:100vh;display:block}
+#intro{position:fixed;inset:0;background:#000;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 1s ease}
+#intro.hide{opacity:0;pointer-events:none}
+.sun-main{width:120px;height:120px;position:relative;filter:drop-shadow(0 0 25px #ffeb3b) drop-shadow(0 0 50px #ffc107);animation:pulse 2s infinite}
+.sun-main::before{content:'🌻';font-size:95px;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
+.glow-ring{position:absolute;inset:-15px;border:2px solid #ffeb3b;border-radius:50%;box-shadow:0 0 20px #ffeb3b, inset 0 0 20px #ffeb3b;animation:rotate 4s linear infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+@keyframes rotate{to{transform:rotate(360deg)}}
+#intro p{margin-top:30px;color:#fff8a6;font-family:'Dancing Script',cursive;font-size:20px;text-shadow:0 0 10px #ffeb3b;letter-spacing:1px;animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.4}}
+#title{position:fixed;top:25px;left:0;width:100%;text-align:center;z-index:10;pointer-events:none;font-family:'Dancing Script',cursive;font-size:28px;color:#ffeb3b;text-shadow:0 0 15px #ffeb3b,0 0 30px #ff9800;opacity:0;transition:opacity 1s 0.5s}
+#title.show{opacity:1}
+#hint{position:fixed;bottom:20px;width:100%;text-align:center;color:#ffffff70;font-size:12px;z-index:10;pointer-events:none;opacity:0;transition:opacity 1s 2s}
+#hint.show{opacity:1}
+</style>
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
+</head>
+<body>
+<div id="intro"><div class="sun-main"><div class="glow-ring"></div></div><p>Feliz 21 de setiembre,disculpame por no poder aver te podido tomarme un tiempo para poder haberte entregado hoy la rosa o flor amarilla pero ahorita lo mas seguro es que ande estudiando o trabajando disculpame por no poder tener todo el tiempo disponible pero te amo de vrd 💛</p></div>
+<div id="title">Feliz día de las Flores Amarillas 🌻</div>
+<div id="hint">Desliza para girar • Pellizca para zoom ✨</div>
+<canvas id="canvas"></canvas>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+const canvas=document.getElementById('canvas');
+const scene=new THREE.Scene();scene.fog=new THREE.Fog(0x000000,40,90);
+const camera=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,0.1,1000);
+camera.position.set(0,18,22);
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+const controls=new OrbitControls(camera,renderer.domElement);
+controls.enableDamping=true;controls.dampingFactor=0.08;controls.minDistance=8;controls.maxDistance=50;controls.autoRotate=true;controls.autoRotateSpeed=0.6;controls.maxPolarAngle=Math.PI/2.1;controls.minPolarAngle=Math.PI/6;
+controls.addEventListener('start',()=>{controls.autoRotate=false;});
+scene.add(new THREE.AmbientLight(0xffffff,0.6));
+const pointLight=new THREE.PointLight(0xffeb3b,2,50);pointLight.position.set(0,2,0);scene.add(pointLight);
+const blackGeo=new THREE.SphereGeometry(2.2,32,32);
+const blackMat=new THREE.MeshStandardMaterial({color:0x0a0a0a,roughness:0.2,metalness:0.1});
+const blackHole=new THREE.Mesh(blackGeo,blackMat);blackHole.position.y=0.5;scene.add(blackHole);
+const ringGeo=new THREE.RingGeometry(2.8,3.8,64);
+const ringMat=new THREE.MeshBasicMaterial({color:0xffeb3b,side:THREE.DoubleSide,transparent:true,opacity:0.95});
+const ring=new THREE.Mesh(ringGeo,ringMat);ring.rotation.x=Math.PI/2;ring.position.y=0.5;scene.add(ring);
+const ring2Geo=new THREE.RingGeometry(3.9,4.4,64);
+const ring2Mat=new THREE.MeshBasicMaterial({color:0xffffff,side:THREE.DoubleSide,transparent:true,opacity:0.7});
+const ring2=new THREE.Mesh(ring2Geo,ring2Mat);ring2.rotation.x=Math.PI/2;ring2.position.y=0.51;scene.add(ring2);
+const starsCount=8000;const starsGeo=new THREE.BufferGeometry();const starsPos=new Float32Array(starsCount*3);
+for(let i=0;i<starsCount;i++){const r=Math.random()*70+5;const theta=Math.random()*Math.PI*2;const y=(Math.random()-0.5)*2;starsPos[i*3]=Math.cos(theta)*r;starsPos[i*3+1]=y*0.5-1.5;starsPos[i*3+2]=Math.sin(theta)*r;}
+starsGeo.setAttribute('position',new THREE.BufferAttribute(starsPos,3));
+const starsMat=new THREE.PointsMaterial({color:0xffffff,size:0.18,sizeAttenuation:true,transparent:true,opacity:0.9});
+const stars=new THREE.Points(starsGeo,starsMat);scene.add(stars);
+const frases=["Mi flor favorita","Eres pura alegria","Feliz dia","Eres luz en mi vida","Pura luz","Eres muy especial","Siempre brillas","Sonrie siempre","Flores para ti","Solo para ti","Un detalle amarillo","Alegra mis dias","Atesoro tu compania","Luz en mi vida","Eres magica","Mi razon de sonreir","Que florezcas siempre","Mi girasol","Eres mi sol","Te pienso siempre"];
+function createSunflowerTexture(){const c=document.createElement('canvas');c.width=128;c.height=128;const ctx=c.getContext('2d');ctx.font='90px serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('🌻',64,70);return new THREE.CanvasTexture(c);}
+const flowerTex=createSunflowerTexture();
+function createTextSprite(text,color='#fff8a6'){const c=document.createElement('canvas');const ctx=c.getContext('2d');ctx.font='bold 36px "Dancing Script", cursive';const w=ctx.measureText(text).width+40;c.width=w;c.height=70;ctx.font='bold 36px "Dancing Script", cursive';ctx.fillStyle=color;ctx.shadowColor=color;ctx.shadowBlur=15;ctx.fillText(text,20,45);const tex=new THREE.CanvasTexture(c);const mat=new THREE.SpriteMaterial({map:tex,transparent:true,depthWrite:false});const sprite=new THREE.Sprite(mat);sprite.scale.set(w/35,2,1);return sprite;}
+const groups=[];for(let r=6;r<32;r+=2.5){const count=Math.floor(r*2.2);for(let i=0;i<count;i++){const angle=(i/count)*Math.PI*2+Math.random()*0.3;const radius=r+(Math.random()-0.5)*1.2;const x=Math.cos(angle)*radius;const z=Math.sin(angle)*radius;const y=(Math.random()-0.5)*0.8;if(Math.random()>0.35){const mat=new THREE.SpriteMaterial({map:flowerTex,transparent:true,depthWrite:false});const spr=new THREE.Sprite(mat);const s=Math.random()*1.2+0.8;spr.scale.set(s*1.8,s*1.8,1);spr.position.set(x,y,z);spr.userData={baseAngle:angle,radius:radius,speed:0.001+Math.random()*0.003,y:y};scene.add(spr);groups.push(spr);}if(Math.random()>0.55){const txt=frases[Math.floor(Math.random()*frases.length)];const col=Math.random()>0.5?'#ffeb3b':'#ffffff';const sprite=createTextSprite(txt,col);sprite.position.set(x*1.05,y+0.5,z*1.05);sprite.userData={baseAngle:angle+0.2,radius:radius*1.05,speed:0.001+Math.random()*0.002,y:y+0.5};scene.add(sprite);groups.push(sprite);}}}
+let autoAngle=0;function animate(){requestAnimationFrame(animate);autoAngle+=0.0015;ring.rotation.z+=0.005;ring2.rotation.z-=0.003;groups.forEach(o=>{const a=o.userData.baseAngle+autoAngle*(20/o.userData.radius)+o.userData.speed*100;o.position.x=Math.cos(a)*o.userData.radius;o.position.z=Math.sin(a)*o.userData.radius;});stars.rotation.y+=0.0003;controls.update();renderer.render(scene,camera);}animate();
+window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
+const intro=document.getElementById('intro');
+function start(){intro.classList.add('hide');document.getElementById('title').classList.add('show');document.getElementById('hint').classList.add('show');controls.autoRotate=true;setTimeout(()=>{document.getElementById('hint').classList.remove('show');},6000);}
+intro.addEventListener('click',start);intro.addEventListener('touchstart',start);
+const params=new URLSearchParams(location.search);const nombre=params.get('para');if(nombre){document.getElementById('title').innerText=`Feliz día, ${nombre} 🌻`;}
+</script>
+</body>
+</html>
